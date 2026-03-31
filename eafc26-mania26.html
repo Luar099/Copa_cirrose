@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EA FC Mania26 - Modo Liga</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020509;
+    --surface: #080d14;
+    --surface2: #0d1520;
+    --surface3: #111d2e;
+    --accent: #00d4ff;
+    --accent2: #ff6b00;
+    --accent3: #00ff88;
+    --gold: #ffd700;
+    --text: #e8f4fd;
+    --text2: #7a9bb5;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+    --glow2: 0 0 20px rgba(255,107,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,212,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 30% at 80% 110%, rgba(255,107,0,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GRID BACKGROUND */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+  /* HEADER */
+  header {
+    padding: 30px 0 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+
+  .logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--accent), #0077ff);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: var(--glow), inset 0 1px 0 rgba(255,255,255,0.2);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: var(--glow), inset 0 1px 0 rgba(255,255,255,0.2); }
+    50% { box-shadow: 0 0 40px rgba(0,212,255,0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
+  }
+
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--accent), #fff 50%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .logo-sub {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 8px;
+    color: var(--accent);
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent2), #ff3d00);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-tab.active {
+    background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(0,119,255,0.1));
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(0,212,255,0.2);
+    border: 1px solid rgba(0,212,255,0.3);
+  }
+
+  .nav-tab:hover:not(.active) { background: var(--surface2); color: var(--text); }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* INPUTS */
+  .input-group { margin-bottom: 16px; }
+  .input-label { font-size: 12px; font-weight: 600; letter-spacing: 2px; color: var(--text2); text-transform: uppercase; margin-bottom: 6px; display: block; }
+
+  input[type="text"], select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="text"]:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  }
+
+  select option { background: var(--surface2); }
+
+  /* BUTTONS */
+  .btn {
+    padding: 11px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0077ff);
+    color: #000;
+    box-shadow: 0 4px 16px rgba(0,212,255,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,212,255,0.5); }
+
+  .btn-accent2 {
+    background: linear-gradient(135deg, var(--accent2), #ff3d00);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(255,107,0,0.3);
+  }
+  .btn-accent2:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(255,107,0,0.5); }
+
+  .btn-success {
+    background: linear-gradient(135deg, var(--accent3), #00cc66);
+    color: #000;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+  .btn-lg { padding: 14px 36px; font-size: 16px; }
+
+  /* PLAYERS LIST */
+  .players-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .player-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    animation: chipIn 0.2s ease;
+  }
+
+  @keyframes chipIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+  .player-chip .rank {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    color: var(--accent);
+    width: 20px;
+    text-align: center;
+  }
+
+  .player-chip .remove {
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 16px;
+    line-height: 1;
+    padding: 0 2px;
+    transition: color 0.2s;
+  }
+  .player-chip .remove:hover { color: #ff4444; }
+
+  /* LEAGUE SELECTOR */
+  .countries-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .country-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .country-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .country-card.selected { border-color: var(--accent); background: rgba(0,212,255,0.08); }
+  .country-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 8px; right: 10px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .country-flag { font-size: 24px; margin-bottom: 4px; }
+  .country-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .country-league { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  .select-all-btn {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .select-all-btn:hover { background: rgba(0,212,255,0.2); }
+
+  /* STANDINGS TABLE */
+  .table-wrapper { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  th {
+    padding: 12px 14px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  th:first-child { text-align: left; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: var(--surface2); }
+
+  tbody tr:nth-child(1) .pos { color: var(--gold); font-weight: 900; }
+  tbody tr:nth-child(2) .pos { color: #c0c0c0; font-weight: 700; }
+  tbody tr:nth-child(3) .pos { color: #cd7f32; font-weight: 700; }
+
+  td {
+    padding: 11px 14px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  td:first-child { text-align: left; }
+
+  .pos { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; color: var(--text2); }
+  .player-name { font-size: 15px; font-weight: 700; }
+  .pts { font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 900; color: var(--accent); }
+
+  .form-badge {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 22px;
+    text-align: center;
+    margin: 0 1px;
+  }
+  .form-W { background: rgba(0,255,136,0.2); color: var(--accent3); border: 1px solid rgba(0,255,136,0.3); }
+  .form-D { background: rgba(255,215,0,0.2); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+  .form-L { background: rgba(255,68,68,0.2); color: #ff4444; border: 1px solid rgba(255,68,68,0.3); }
+
+  /* FIXTURES */
+  .rounds-container { }
+
+  .round-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0 8px;
+    cursor: pointer;
+  }
+
+  .round-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+
+  .round-info {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex: 1;
+  }
+
+  .league-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .match-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+
+  .match-card:hover { border-color: rgba(0,212,255,0.3); }
+  .match-card.completed { border-color: rgba(0,255,136,0.2); }
+
+  .match-player {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .match-player.home { text-align: right; }
+  .match-player.away { text-align: left; }
+
+  .match-score {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+  }
+
+  .score-input {
+    width: 36px;
+    text-align: center;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 2px;
+    outline: none;
+  }
+  .score-input:focus { background: rgba(0,212,255,0.1); }
+  .score-sep { color: var(--text2); font-weight: 700; }
+
+  .match-confirm {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(0,255,136,0.15);
+    color: var(--accent3);
+    border: 1px solid rgba(0,255,136,0.3);
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .match-confirm:hover { background: rgba(0,255,136,0.25); }
+  .match-confirm.confirmed { background: rgba(0,255,136,0.3); }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text2);
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s;
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  /* SPIN ANIMATION */
+  .spin-container {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .spin-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-right-color: var(--accent2);
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .spin-result {
+    animation: none !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 30px rgba(0,212,255,0.4);
+  }
+
+  /* ALERT */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .alert-info { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); color: var(--accent); }
+  .alert-success { background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); color: var(--accent3); }
+  .alert-warning { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3); color: var(--gold); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: var(--text2);
+    font-size: 12px;
+    letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 20px 0;
+  }
+
+  .flex { display: flex; }
+  .flex-wrap { flex-wrap: wrap; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mb-12 { margin-bottom: 12px; }
+
+  /* Progress bar */
+  .progress-bar { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s ease; }
+
+  .champion-banner {
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,0,0.1));
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .champion-trophy { font-size: 60px; margin-bottom: 8px; }
+  .champion-name { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; color: var(--gold); }
+  .champion-label { font-size: 12px; letter-spacing: 3px; color: var(--text2); text-transform: uppercase; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.3); }
+
+  @media (max-width: 600px) {
+    .logo-text { font-size: 36px; }
+    .logo-icon { width: 44px; height: 44px; font-size: 22px; }
+    .countries-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+    .match-player { font-size: 13px; }
+    th, td { padding: 8px 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo-area">
+      <div class="logo-icon">⚽</div>
+      <div>
+        <div class="logo-text">EA FC MANIA26</div>
+        <div class="logo-sub">Modo Liga · Ultimate Edition</div>
+      </div>
+    </div>
+    <div class="badge">⚡ Modo Torneio Oficial</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('setup')">⚙️ Configurar</button>
+    <button class="nav-tab" onclick="showSection('liga')">🏆 Tabela</button>
+    <button class="nav-tab" onclick="showSection('fixtures')">📅 Jogos</button>
+    <button class="nav-tab" onclick="showSection('stats')">📊 Estatísticas</button>
+  </nav>
+
+  <!-- SECTION: SETUP -->
+  <div class="section active" id="section-setup">
+    <div class="card">
+      <div class="card-title">👥 Adicionar Participantes</div>
+      <div class="flex gap-8">
+        <input type="text" id="playerInput" placeholder="Nome do jogador..." onkeydown="if(event.key==='Enter')addPlayer()">
+        <button class="btn btn-primary" onclick="addPlayer()">+ Adicionar</button>
+      </div>
+      <div class="players-grid" id="playersList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌍 Configurar Ligas / Países</div>
+      <div class="flex items-center gap-12 mb-12">
+        <button class="select-all-btn" onclick="toggleAll(true)">✓ Selecionar Todos</button>
+        <button class="select-all-btn" onclick="toggleAll(false)">✕ Limpar</button>
+        <div style="margin-left:auto">
+          <span id="selectedCount" style="font-size:13px;color:var(--accent);font-weight:700">0 selecionados</span>
+        </div>
+      </div>
+      <div class="countries-grid" id="countriesGrid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 Configurações da Liga</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="input-group">
+          <label class="input-label">Formato</label>
+          <select id="formatSelect">
+            <option value="todos">Todos contra todos (1 turno)</option>
+            <option value="todos2">Todos contra todos (2 turnos)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Nome da Liga</label>
+          <input type="text" id="leagueName" placeholder="Ex: Mania26 Premier" value="Mania26 League">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="flex gap-8 flex-wrap">
+        <button class="btn btn-accent2 btn-lg" onclick="generateLeague()">🎲 Gerar Liga</button>
+        <button class="btn btn-ghost" onclick="resetAll()">🔄 Resetar Tudo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: TABELA -->
+  <div class="section" id="section-liga">
+    <div id="championBanner" style="display:none"></div>
+
+    <div class="card">
+      <div class="card-title">🏆 <span id="leagueNameDisplay">Mania26 League</span></div>
+      <div class="progress-bar mb-12">
+        <div class="progress-fill" id="leagueProgress" style="width:0%"></div>
+      </div>
+      <div class="table-wrapper">
+        <table id="standingsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th style="text-align:left">Jogador</th>
+              <th>PJ</th>
+              <th>V</th>
+              <th>E</th>
+              <th>D</th>
+              <th>GP</th>
+              <th>GC</th>
+              <th>SG</th>
+              <th>PTS</th>
+              <th>Forma</th>
+            </tr>
+          </thead>
+          <tbody id="standingsBody">
+            <tr><td colspan="11" style="text-align:center;padding:30px;color:var(--text2)">Configure e gere a liga primeiro ⚙️</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: FIXTURES -->
+  <div class="section" id="section-fixtures">
+    <div class="card">
+      <div class="card-title">📅 Rodadas & Confrontos</div>
+      <div id="fixturesContainer">
+        <div style="text-align:center;padding:40px;color:var(--text2)">Nenhuma liga gerada ainda. Configure e clique em "Gerar Liga" ⚙️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: STATS -->
+  <div class="section" id="section-stats">
+    <div class="card">
+      <div class="card-title">📊 Estatísticas Gerais</div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><span class="stat-value" id="stat-partidas">0</span><span class="stat-label">Partidas</span></div>
+        <div class="stat-card"><span class="stat-value" id="stat-gols">0</span><span class="stat-label">Gols</span></div>
+        <div class="stat-card"><span class="stat-value" id="stat-jogadores">0</span><span class="stat-label">Jogadores</span></div>
+        <div class="stat-card"><span class="stat-value" id="stat-rodadas">0</span><span class="stat-label">Rodadas</span></div>
+      </div>
+      <div id="topScorersSection"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SPIN -->
+<div class="modal-overlay" id="spinModal">
+  <div class="modal">
+    <div class="modal-title" id="spinTitle">🎲 Sorteando...</div>
+    <div class="spin-container">
+      <div class="spin-circle" id="spinCircle"><span id="spinEmoji">🌍</span></div>
+      <div id="spinText" style="font-family:'Rajdhani';font-size:20px;font-weight:700;color:var(--text)">Aguarde...</div>
+      <div id="spinSub" style="font-size:13px;color:var(--text2);margin-top:4px"></div>
+    </div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn btn-primary" id="spinNext" style="display:none" onclick="closeSpinModal()">Continuar ✓</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>EA FC MANIA26 · Modo Liga · Feito para guerreiros do futebol virtual</div>
+  <div style="margin-top:6px;color:rgba(255,255,255,0.2);font-size:10px">Não afiliado à EA Sports</div>
+</footer>
+
+<script>
+// =================== DATA ===================
+const COUNTRIES = [
+  { id: 'england', name: 'Inglaterra', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', league: 'Premier League', emoji: '⚽', teams: ['Manchester City','Arsenal','Liverpool','Chelsea','Manchester United','Tottenham','Newcastle','Aston Villa','Brighton','West Ham','Brentford','Fulham','Crystal Palace','Wolves','Everton','Nottingham Forest','Bournemouth','Burnley','Sheffield United','Luton Town'] },
+  { id: 'spain', name: 'Espanha', flag: '🇪🇸', league: 'La Liga', emoji: '🔴', teams: ['Real Madrid','Barcelona','Atletico Madrid','Sevilla','Real Sociedad','Villarreal','Athletic Bilbao','Betis','Osasuna','Valencia','Rayo Vallecano','Celta Vigo','Getafe','Mallorca','Las Palmas','Girona','Alaves','Granada','Almeria','Cadiz'] },
+  { id: 'germany', name: 'Alemanha', flag: '🇩🇪', league: 'Bundesliga', emoji: '⚫', teams: ['Bayern Munich','Borussia Dortmund','RB Leipzig','Union Berlin','Freiburg','Bayer Leverkusen','Frankfurt','Wolfsburg','Mainz','Borussia M\'Gladbach','Köln','Hoffenheim','Werder Bremen','Augsburg','VfL Bochum','Stuttgart','Darmstadt','Heidenheim'] },
+  { id: 'italy', name: 'Itália', flag: '🇮🇹', league: 'Serie A', emoji: '🔵', teams: ['Inter Milan','AC Milan','Juventus','Napoli','Lazio','Roma','Atalanta','Fiorentina','Torino','Bologna','Udinese','Monza','Sassuolo','Empoli','Salernitana','Lecce','Genoa','Frosinone','Cagliari','Hellas Verona'] },
+  { id: 'france', name: 'França', flag: '🇫🇷', league: 'Ligue 1', emoji: '🔷', teams: ['PSG','Monaco','Lens','Lille','Marseille','Lyon','Nice','Rennes','Toulouse','Brest','Montpellier','Reims','Nantes','Strasbourg','Metz','Lorient','Clermont','Le Havre','Metz','Auxerre'] },
+  { id: 'portugal', name: 'Portugal', flag: '🇵🇹', league: 'Primeira Liga', emoji: '🟢', teams: ['Benfica','Porto','Sporting CP','Braga','Vitória Guimarães','Casa Pia','Arouca','Famalicão','Portimonense','Gil Vicente','Chaves','Vizela','Boavista','Estoril','Farense','Moreirense'] },
+  { id: 'netherlands', name: 'Países Baixos', flag: '🇳🇱', league: 'Eredivisie', emoji: '🟠', teams: ['Ajax','PSV','Feyenoord','AZ Alkmaar','Twente','Utrecht','Heerenveen','Vitesse','Groningen','NEC Nijmegen','Sparta Rotterdam','RKC Waalwijk','Fortuna Sittard','Almere City','Excelsior','PEC Zwolle'] },
+  { id: 'brazil', name: 'Brasil', flag: '🇧🇷', league: 'Brasileirão', emoji: '💚', teams: ['Flamengo','Palmeiras','Atletico MG','Grêmio','Internacional','São Paulo','Corinthians','Fluminense','Botafogo','Vasco','Bragantino','Fortaleza','Bahia','Cuiabá','Cruzeiro','Santos','América MG','Coritiba','Goiás','Athletico PR'] },
+  { id: 'argentina', name: 'Argentina', flag: '🇦🇷', league: 'Liga Profesional', emoji: '🩵', teams: ['River Plate','Boca Juniors','Racing','Independiente','San Lorenzo','Estudiantes','Huracán','Vélez','Lanús','Banfield','Talleres','Belgrano','Newells Old Boys','Rosario Central','Godoy Cruz','Tigre','Platense','Colón'] },
+  { id: 'usa', name: 'EUA', flag: '🇺🇸', league: 'MLS', emoji: '🦅', teams: ['Inter Miami','LA Galaxy','LAFC','Seattle Sounders','Atlanta United','New York City FC','New England Revolution','Philadelphia Union','Portland Timbers','Columbus Crew','Chicago Fire','FC Dallas','Minnesota United','Real Salt Lake','Colorado Rapids'] },
+  { id: 'mexico', name: 'México', flag: '🇲🇽', league: 'Liga MX', emoji: '🦅', teams: ['Club América','Chivas','Cruz Azul','Pumas','Tigres UANL','Rayados','Santos Laguna','Atlas','Toluca','León','Pachuca','Necaxa','San Luis','Mazatlán','FC Juárez','Querétaro'] },
+  { id: 'turkey', name: 'Turquia', flag: '🇹🇷', league: 'Süper Lig', emoji: '🌙', teams: ['Galatasaray','Fenerbahçe','Beşiktaş','Trabzonspor','Başakşehir','Sivasspor','Antalyaspor','Kasımpaşa','Alanyaspor','Konyaspor','Adana Demirspor','Gaziantep','Hatayspor'] },
+  { id: 'saudi', name: 'Arábia Saudita', flag: '🇸🇦', league: 'Saudi Pro League', emoji: '🌴', teams: ['Al-Hilal','Al-Nassr','Al-Ittihad','Al-Ahli','Al-Qadsiah','Al-Shabab','Al-Fateh','Al-Wehda','Damac','Abha','Al-Hazem','Al-Taawoun'] },
+  { id: 'japan', name: 'Japão', flag: '🇯🇵', league: 'J1 League', emoji: '⛩️', teams: ['Cerezo Osaka','Gamba Osaka','Kashima Antlers','Kashiwa Reysol','Kawasaki Frontale','Nagoya Grampus','Urawa Red Diamonds','Yokohama F. Marinos','Vissel Kobe','Sanfrecce Hiroshima'] },
+  { id: 'china', name: 'China', flag: '🇨🇳', league: 'CSL', emoji: '🐉', teams: ['Shanghai Port','Wuhan Three Towns','Shandong Taishan','Beijing FC','Guangzhou FC','Chengdu Rongcheng','Dalian Pro','Cangzhou Mighty Lions','Henan FC','Tianjin Tigers'] },
+];
+
+let players = [];
+let selectedCountries = new Set();
+let rounds = [];
+let standings = {};
+let leagueGenerated = false;
+
+// =================== INIT ===================
+function init() {
+  renderCountries();
+  renderPlayers();
+}
+
+// =================== PLAYERS ===================
+function addPlayer() {
+  const input = document.getElementById('playerInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (players.includes(name)) { alert('Jogador já adicionado!'); return; }
+  players.push(name);
+  input.value = '';
+  renderPlayers();
+  input.focus();
+}
+
+function removePlayer(i) {
+  players.splice(i, 1);
+  renderPlayers();
+}
+
+function renderPlayers() {
+  const el = document.getElementById('playersList');
+  if (!players.length) { el.innerHTML = '<div style="color:var(--text2);font-size:13px;margin-top:8px">Nenhum jogador adicionado ainda...</div>'; return; }
+  el.innerHTML = players.map((p, i) => `
+    <div class="player-chip">
+      <span class="rank">${i + 1}</span>
+      <span>${p}</span>
+      <span class="remove" onclick="removePlayer(${i})">×</span>
+    </div>
+  `).join('');
+}
+
+// =================== COUNTRIES ===================
+function renderCountries() {
+  const grid = document.getElementById('countriesGrid');
+  grid.innerHTML = COUNTRIES.map(c => `
+    <div class="country-card ${selectedCountries.has(c.id) ? 'selected' : ''}" onclick="toggleCountry('${c.id}')" id="cc-${c.id}">
+      <div class="country-flag">${c.flag}</div>
+      <div class="country-name">${c.name}</div>
+      <div class="country-league">${c.league}</div>
+    </div>
+  `).join('');
+  updateSelectedCount();
+}
+
+function toggleCountry(id) {
+  if (selectedCountries.has(id)) selectedCountries.delete(id);
+  else selectedCountries.add(id);
+  const el = document.getElementById('cc-' + id);
+  el.classList.toggle('selected');
+  updateSelectedCount();
+}
+
+function toggleAll(val) {
+  COUNTRIES.forEach(c => {
+    if (val) selectedCountries.add(c.id);
+    else selectedCountries.delete(c.id);
+    const el = document.getElementById('cc-' + c.id);
+    if (el) el.classList.toggle('selected', val);
+  });
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  document.getElementById('selectedCount').textContent = selectedCountries.size + ' selecionados';
+}
+
+// =================== GENERATE LEAGUE ===================
+function generateLeague() {
+  if (players.length < 2) { alert('Adicione pelo menos 2 jogadores!'); return; }
+
+  const pool = selectedCountries.size > 0
+    ? COUNTRIES.filter(c => selectedCountries.has(c.id))
+    : COUNTRIES;
+
+  if (pool.length === 0) { alert('Selecione pelo menos um país!'); return; }
+
+  const doubled = document.getElementById('formatSelect').value === 'todos2';
+  const name = document.getElementById('leagueName').value || 'Mania26 League';
+
+  // Generate fixtures
+  const matchups = generateRoundRobin(players, doubled);
+
+  // Assign country+league to each round (muda a cada rodada)
+  rounds = matchups.map((roundMatches, i) => {
+    const country = pool[Math.floor(Math.random() * pool.length)];
+    const teamsInRound = [];
+    const usedTeams = new Set();
+    const matchesWithTeams = roundMatches.map(m => {
+      let t1 = country.teams[Math.floor(Math.random() * country.teams.length)];
+      let t2;
+      do { t2 = country.teams[Math.floor(Math.random() * country.teams.length)]; } while (t2 === t1);
+      return { ...m, country, team1: t1, team2: t2, homeScore: '', awayScore: '', confirmed: false };
+    });
+    return { round: i + 1, country, matches: matchesWithTeams };
+  });
+
+  // Init standings
+  standings = {};
+  players.forEach(p => {
+    standings[p] = { p: 0, v: 0, e: 0, d: 0, gp: 0, gc: 0, pts: 0, form: [] };
+  });
+
+  leagueGenerated = true;
+  document.getElementById('leagueNameDisplay').textContent = name;
+  renderStandings();
+  renderFixtures();
+  updateStats();
+  showSection('liga');
+
+  // Animate intro
+  setTimeout(() => showSpinResult(pool), 200);
+}
+
+function generateRoundRobin(players, doubled) {
+  const ps = [...players];
+  if (ps.length % 2 !== 0) ps.push('BYE');
+  const n = ps.length;
+  const rounds = [];
+  const half = n / 2;
+
+  for (let r = 0; r < n - 1; r++) {
+    const round = [];
+    for (let i = 0; i < half; i++) {
+      const home = ps[i];
+      const away = ps[n - 1 - i];
+      if (home !== 'BYE' && away !== 'BYE') round.push({ home, away });
+    }
+    rounds.push(round);
+    ps.splice(1, 0, ps.pop());
+  }
+
+  if (doubled) {
+    const extra = rounds.map(r => r.map(m => ({ home: m.away, away: m.home })));
+    return [...rounds, ...extra];
+  }
+  return rounds;
+}
+
+// =================== SPIN MODAL ===================
+function showSpinResult(pool) {
+  const modal = document.getElementById('spinModal');
+  const circle = document.getElementById('spinCircle');
+  const emoji = document.getElementById('spinEmoji');
+  const text = document.getElementById('spinText');
+  const sub = document.getElementById('spinSub');
+  const nextBtn = document.getElementById('spinNext');
+  document.getElementById('spinTitle').textContent = '🎲 Sorteio de Ligas!';
+
+  modal.classList.add('open');
+  emoji.textContent = '🌍';
+  text.textContent = 'Sorteando países...';
+  sub.textContent = pool.length + ' países disponíveis';
+  nextBtn.style.display = 'none';
+  circle.classList.remove('spin-result');
+
+  setTimeout(() => {
+    circle.classList.add('spin-result');
+    const sample = pool.slice(0, Math.min(3, pool.length));
+    const names = sample.map(c => c.flag + ' ' + c.name).join(' · ');
+    emoji.textContent = '✅';
+    text.textContent = 'Liga Gerada com Sucesso!';
+    sub.textContent = 'Países sorteados por rodada: ' + names + (pool.length > 3 ? '...' : '');
+    nextBtn.style.display = 'inline-block';
+  }, 1800);
+}
+
+function closeSpinModal() {
+  document.getElementById('spinModal').classList.remove('open');
+}
+
+// =================== RENDER STANDINGS ===================
+function renderStandings() {
+  const body = document.getElementById('standingsBody');
+  const sorted = Object.entries(standings)
+    .map(([name, s]) => ({ name, ...s, sg: s.gp - s.gc }))
+    .sort((a, b) => b.pts - a.pts || b.sg - a.sg || b.gp - a.gp);
+
+  const total = rounds.reduce((acc, r) => acc + r.matches.length, 0);
+  const done = rounds.reduce((acc, r) => acc + r.matches.filter(m => m.confirmed).length, 0);
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('leagueProgress').style.width = pct + '%';
+
+  if (!sorted.length) { body.innerHTML = '<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--text2)">Nenhum dado ainda</td></tr>'; return; }
+
+  body.innerHTML = sorted.map((p, i) => {
+    const formHtml = (p.form || []).slice(-5).map(f => `<span class="form-badge form-${f}">${f}</span>`).join('');
+    const podium = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+    return `
+      <tr>
+        <td><span class="pos">${podium || (i + 1)}</span></td>
+        <td><span class="player-name">${p.name}</span></td>
+        <td>${p.p}</td>
+        <td style="color:var(--accent3)">${p.v}</td>
+        <td style="color:var(--gold)">${p.e}</td>
+        <td style="color:#ff6666">${p.d}</td>
+        <td>${p.gp}</td>
+        <td>${p.gc}</td>
+        <td style="color:${p.sg >= 0 ? 'var(--accent3)' : '#ff6666'}">${p.sg >= 0 ? '+' : ''}${p.sg}</td>
+        <td><span class="pts">${p.pts}</span></td>
+        <td>${formHtml || '<span style="color:var(--text2);font-size:12px">—</span>'}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // Champion banner
+  const allDone = total > 0 && done === total;
+  const bannerEl = document.getElementById('championBanner');
+  if (allDone && sorted.length > 0) {
+    const champ = sorted[0];
+    bannerEl.style.display = 'block';
+    bannerEl.innerHTML = `
+      <div class="champion-banner">
+        <div class="champion-trophy">🏆</div>
+        <div class="champion-label">Campeão da</div>
+        <div class="champion-name">${document.getElementById('leagueNameDisplay').textContent}</div>
+        <div style="font-size:28px;font-weight:700;margin-top:8px;color:var(--gold)">${champ.name}</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:4px">${champ.pts} pts · ${champ.v}V ${champ.e}E ${champ.d}D</div>
+      </div>
+    `;
+  } else {
+    bannerEl.style.display = 'none';
+  }
+}
+
+// =================== RENDER FIXTURES ===================
+function renderFixtures() {
+  const container = document.getElementById('fixturesContainer');
+  if (!rounds.length) { container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Nenhuma rodada gerada</div>'; return; }
+
+  container.innerHTML = rounds.map(r => `
+    <div style="margin-bottom:24px">
+      <div class="round-header">
+        <div class="round-title">RODADA ${r.round}</div>
+        <div class="round-info">
+          <div class="league-badge">${r.country.flag} ${r.country.name} · ${r.country.league}</div>
+        </div>
+      </div>
+      ${r.matches.map((m, mi) => `
+        <div class="match-card ${m.confirmed ? 'completed' : ''}" id="match-${r.round}-${mi}">
+          <div class="match-player home" style="flex:1.5">${m.home}</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <div class="match-score">
+              <input type="number" class="score-input" id="hs-${r.round}-${mi}" value="${m.homeScore}" min="0" max="99" placeholder="0" ${m.confirmed ? 'disabled' : ''}>
+              <span class="score-sep">×</span>
+              <input type="number" class="score-input" id="as-${r.round}-${mi}" value="${m.awayScore}" min="0" max="99" placeholder="0" ${m.confirmed ? 'disabled' : ''}>
+            </div>
+            <div style="font-size:10px;color:var(--text2);font-weight:600">${m.team1} vs ${m.team2}</div>
+          </div>
+          <div class="match-player away" style="flex:1.5">${m.away}</div>
+          <button class="match-confirm ${m.confirmed ? 'confirmed' : ''}" onclick="confirmMatch(${r.round - 1}, ${mi})">${m.confirmed ? '✓ OK' : 'Confirmar'}</button>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// =================== CONFIRM MATCH ===================
+function confirmMatch(roundIdx, matchIdx) {
+  const r = rounds[roundIdx];
+  const m = r.matches[matchIdx];
+  if (m.confirmed) return;
+
+  const hs = parseInt(document.getElementById(`hs-${roundIdx + 1}-${matchIdx}`).value);
+  const as_ = parseInt(document.getElementById(`as-${roundIdx + 1}-${matchIdx}`).value);
+
+  if (isNaN(hs) || isNaN(as_) || hs < 0 || as_ < 0) { alert('Insira os placares válidos!'); return; }
+
+  m.homeScore = hs;
+  m.awayScore = as_;
+  m.confirmed = true;
+
+  // Update standings
+  const sh = standings[m.home];
+  const sa = standings[m.away];
+  sh.p++; sa.p++;
+  sh.gp += hs; sh.gc += as_;
+  sa.gp += as_; sa.gc += hs;
+
+  if (hs > as_) {
+    sh.v++; sh.pts += 3; sh.form.push('W');
+    sa.d++; sa.form.push('L');
+  } else if (as_ > hs) {
+    sa.v++; sa.pts += 3; sa.form.push('W');
+    sh.d++; sh.form.push('L');
+  } else {
+    sh.e++; sh.pts += 1; sh.form.push('D');
+    sa.e++; sa.pts += 1; sa.form.push('D');
+  }
+
+  renderStandings();
+  renderFixtures();
+  updateStats();
+}
+
+// =================== STATS ===================
+function updateStats() {
+  const totalMatches = rounds.reduce((acc, r) => acc + r.matches.length, 0);
+  const confirmedMatches = rounds.reduce((acc, r) => acc + r.matches.filter(m => m.confirmed).length, 0);
+  const totalGoals = Object.values(standings).reduce((acc, s) => acc + s.gp, 0);
+
+  document.getElementById('stat-partidas').textContent = confirmedMatches + '/' + totalMatches;
+  document.getElementById('stat-gols').textContent = totalGoals;
+  document.getElementById('stat-jogadores').textContent = players.length;
+  document.getElementById('stat-rodadas').textContent = rounds.length;
+
+  // Top scorers section (goals = gp for now, as we don't track individual scorers)
+  const sorted = Object.entries(standings)
+    .map(([n, s]) => ({ name: n, gp: s.gp }))
+    .sort((a, b) => b.gp - a.gp);
+
+  const topEl = document.getElementById('topScorersSection');
+  if (!sorted.length || sorted[0].gp === 0) { topEl.innerHTML = ''; return; }
+  topEl.innerHTML = `
+    <div class="divider"></div>
+    <div class="card-title" style="font-size:16px;margin-bottom:12px">⚽ Ranking de Gols (por equipe)</div>
+    ${sorted.slice(0, 5).map((p, i) => `
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;padding:8px 12px;background:var(--surface2);border-radius:8px">
+        <span style="font-family:'Orbitron';font-size:12px;color:var(--text2);width:20px">${i + 1}</span>
+        <span style="flex:1;font-weight:700">${p.name}</span>
+        <span style="font-family:'Orbitron';color:var(--accent);font-weight:700">${p.gp}</span>
+        <span style="font-size:11px;color:var(--text2)">gols</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+// =================== NAVIGATION ===================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  const tabs = ['setup', 'liga', 'fixtures', 'stats'];
+  const idx = tabs.indexOf(id);
+  document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+}
+
+// =================== RESET ===================
+function resetAll() {
+  if (!confirm('Tem certeza que deseja resetar tudo?')) return;
+  players = [];
+  selectedCountries = new Set();
+  rounds = [];
+  standings = {};
+  leagueGenerated = false;
+  renderPlayers();
+  renderCountries();
+  renderStandings();
+  renderFixtures();
+  updateStats();
+  showSection('setup');
+}
+
+// =================== BOOT ===================
+init();
+</script>
+</body>
+</html>
